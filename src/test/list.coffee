@@ -84,10 +84,6 @@ module.exports =
                         type: 'main'
                         body: "hello world"
                     },
-                    {
-                        type: 'footer'
-                        body: "big foot"
-                    },
                 ]
             }
             tpl = @tpl = jqueryify {$}, new Template schema:5, ->
@@ -98,6 +94,13 @@ module.exports =
                     @$body data.repeat 'content', (content) ->
                         attrs = content.get('attrs') ? {}
                         this['$' + content.get 'type'](attrs, content.bind 'body')
+
+            setTimeout ->
+                data.addTo 'content', {
+                    type: 'footer'
+                    body: "big foot"
+                }
+            , 16
 
             setTimeout ->
                 data.set 'content.0.body', "honking"
