@@ -8,6 +8,7 @@
 , "engines": {"node": ">= 0.4.x"}
 , "keywords": ["dt", "async", "dynamic", "event", "template", "stream", "browser", "list", "order", "data", "binding"]
 , "scripts": {
+    "test": "cake build && nodeunit test",
     "prepublish": "cake build"}
 , "dependencies": {
     "adiff": "*",
@@ -15,6 +16,9 @@
 , "peerDependencies": {
     "dynamictemplate": ">= 0.6.0"}
 , "devDependencies": {
+    "jquery": "1.8.3",
+    "dt-jquery": "0.3.6",
+    "nodeunit": ">= 0.7.4",
     "browserify": "1.6.1",
     "scopify": ">= 0.2.1",
     "muffin": ">= 0.2.6",
