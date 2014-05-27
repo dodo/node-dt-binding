@@ -3,6 +3,7 @@ isArray = Array.isArray
 
 deep_get = (data, keys) ->
     return unless data?
+    return data unless keys.length
     for key in keys.split('.')
         next = data[key]
         next = next.call(data) if typeof next is 'function'
