@@ -91,18 +91,14 @@ listpartialize = (items, create, old, value = []) ->
         @add(item)
     # add newly created items
     for itempartial in added
-        if itempartial.run?
-            @add(itempartial)
-            itempartial.run()
+        @partial(itempartial)
     return this
 
 listpartial = (items, create, old, value) ->
     partial = boundpartial create.bind(this), value
     old.value.push(value)
     items.push(partial)
-    if partial.run?
-        @add(partial)
-        partial.run()
+    @partial(partial)
     return partial
 
 
