@@ -18,6 +18,7 @@ deep_set = (data, keys, value) ->
     data = deep_get data, keys.join('.')
     return data?[key] = value
 
+# callback can be either string or function or object of string or function values
 functionify = (callback, args) ->
     unless typeof callback is 'function'
         if isArray(callback)
@@ -38,6 +39,7 @@ functionify = (callback, args) ->
             callback.apply(this, args.concat [value])
     return callback
 
+# key can be either string or object of callback values
 multiplex = (key, callback, args, action) ->
     if typeof key is 'object'
         callbacks = key
