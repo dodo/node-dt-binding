@@ -139,9 +139,10 @@ class ListBinding extends Binding
             next = next.call(data) if typeof next is 'function'
             data = next
             if isArray(data)
+                k = keys.pop() # index
                 restkeys = keys.slice(i + 1)
                 restkeys.push(last_key)
-                result = @items[curkey][k]?._bind?.set(restkey.join('.'), value)
+                result = @items[curkey][k]?._bind?.set(restkeys.join('.'), value)
                 @trigger key, result if @items[curkey][k]?._bind?
                 return result
             break unless data?
