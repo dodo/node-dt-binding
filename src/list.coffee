@@ -44,12 +44,13 @@ listrm = (items, old) ->
     return [[], [], removed]
 
 listsync = (items, create, old, value) ->
-    [added, changed, dead] = [[], [], {}]
+    [added, changed, removed] = [[], [], []]
     # apply diff patches on items list
+    old_items = slice.call(items)
     for patch in adiff.diff(old.value, value)
         # remove all items from dom before splicing them in
-        for i in [(patch[0]) ... (patch[0]+patch[1])]
-            dead[i] = items[i]
+        for i in [(patch[0]) ... (patch[0]+patch[1])] when changed.indexOf(items[i]) is -1
+            removed.push items[i]
         # replace values with items
         for n in [2 ... patch.length]
             i = old.value.indexOf(patch[n])
@@ -59,14 +60,15 @@ listsync = (items, create, old, value) ->
                 added.push patch[n]
             else
                 # restore existing item to be spliced back into items
-                delete dead[i]
-                patch[n] = items[i]
-                changed.push patch[n]
-                items[i].remove(soft:yes)
+                patch[n] = old_items[i]
+                changed.push old_items[i]
+                old_items[i].remove(soft:yes)
+                r = removed.indexOf(old_items[i])
+                removed.splice(r, 1) unless r is -1
         # apply patch!
         items.splice.apply(items, patch)
     # remove all dead hard
-    removed = for i, item of dead
+    for item in removed
         item.remove(soft:no)
     # cache old value to diff it later against new value
     old.value = slice.call(value)
@@ -85,7 +87,7 @@ listswitch = (items, create, old, value) ->
         listsync(items, create, old, value)
 
 listpartialize = (items, create, old, value = []) ->
-    [added, changed, removed] = listswitch(items, create.bind(this), old, value)
+    [added, changed, removed] = listswitch(items, create, old, value)
     # readd changed items and sliced back in items
     for item in changed
         @add(item)
@@ -95,10 +97,10 @@ listpartialize = (items, create, old, value = []) ->
     return this
 
 listpartial = (items, create, old, value) ->
-    partial = boundpartial create.bind(this), value
-    old.value.push(value)
+    partial = boundpartial create, value
     items.push(partial)
     @partial(partial)
+    old.value.push(value)
     return partial
 
 
