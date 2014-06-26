@@ -48,15 +48,17 @@ listsync = (items, create, old, value) ->
     # apply diff patches on items list
     old_items = slice.call(items)
     for patch in adiff.diff(old.value, value)
+        # get indizes from patch
+        [index, del] = patch
         # remove all items from dom before splicing them in
-        for i in [(patch[0]) ... (patch[0]+patch[1])] when changed.indexOf(items[i]) is -1
+        for i in [index ... (index + del)] when changed.indexOf(items[i]) is -1
             removed.push items[i]
         # replace values with items
         for n in [2 ... patch.length]
             i = old.value.indexOf(patch[n])
             if i is -1
                 # create new value
-                patch[n] = boundpartial create, patch[n], patch[0] + n - 2
+                patch[n] = boundpartial create, patch[n], index + n - 2
                 added.push patch[n]
             else
                 # restore existing item to be spliced back into items
