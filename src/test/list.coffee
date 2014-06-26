@@ -1,8 +1,11 @@
 { EventEmitter } = require 'events'
 jQuery = require 'jQuery'
-jqueryify = require 'dt-jquery'
 { Template } = require 'dynamictemplate'
 { Binding } = require '../list'
+
+jqueryify = (opts, tpl) ->
+    opts.use = require 'dt-list/adapter/jquery'
+    require('dt-jquery')(opts, tpl)
 
 HTML = ($,el) ->
     $div = $('<div>')
