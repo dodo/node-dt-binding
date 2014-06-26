@@ -162,10 +162,13 @@ class ListBinding extends Binding
         return value
 
     addTo: (key, value) ->
+        @get(key)?.push?(value)
         return @partials[key]?(value)
 
     removeFrom: (key, i) ->
-        return unless @values[key]?
+        return unless @values[key]?.length
+        i ?= @values[key].value.length - 1
+        @get(key).splice(i, 1)
         @values[key].value.splice(i, 1)
         delete @items[i]._bind
         return @items.remove(i)
