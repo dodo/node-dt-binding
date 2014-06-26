@@ -105,6 +105,33 @@ listpartial = (items, create, old, value) ->
     old.value.push(value)
     return partial
 
+deep_set = (items, data, key, value) ->
+    keys = key.split('.')
+    last_key = keys.pop()
+
+    curkey = ''
+    for k, i in keys
+        curkey += (curkey and '.' or '') + k
+        curdata = data
+        next = data[k]
+        next = next.call(data) if typeof next is 'function'
+        data = next
+        if isArray(data)
+            i = keys.pop() # index
+            restkeys = keys.slice(i + 1)
+            restkeys.push(last_key)
+            binding = items[curkey][i]?._bind
+            if restkeys.length is 0
+                curdata[k][i] = value
+                result = binding?.change(value)
+            else
+                result = binding?.set(restkeys.join('.'), value)
+            return value:result, trigger:binding?
+        break unless data?
+
+    data?[last_key] = value
+    return value:value, trigger:data?
+
 
 class ListBinding extends Binding
 
@@ -132,34 +159,9 @@ class ListBinding extends Binding
         super
 
     set: (key, value) ->
-        data = @data
-        keys = key.split('.')
-        last_key = keys.pop()
-
-        curkey = ''
-        for k, i in keys
-            curkey += (curkey and '.' or '') + k
-            curdata = data
-            next = data[k]
-            next = next.call(data) if typeof next is 'function'
-            data = next
-            if isArray(data)
-                i = keys.pop() # index
-                restkeys = keys.slice(i + 1)
-                restkeys.push(last_key)
-                binding = @items[curkey][i]?._bind
-                if restkeys.length is 0
-                    curdata[k][i] = value
-                    result = binding?.change(value)
-                else
-                    result = binding?.set(restkeys.join('.'), value)
-                @trigger key, result if binding?
-                return result
-            break unless data?
-
-        data?[last_key] = value
-        @trigger key, value if data?
-        return value
+        result = deep_set @items, @data, key, value
+        @trigger key, result.value if result.trigger
+        return result.value
 
     addTo: (key, value) ->
         @get(key)?.push?(value)
@@ -182,3 +184,4 @@ ListBinding.listpartial = listpartial
 ListBinding.listsync = listsync
 ListBinding.listadd = listadd
 ListBinding.listrm = listrm
+ListBinding.deep_set = deep_set
