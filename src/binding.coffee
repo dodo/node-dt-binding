@@ -46,11 +46,11 @@ multiplex = (key, callback, args, action) ->
         return () ->
             for key, callback of callbacks
                 callback = functionify callback, args
-                action.call this, key, callback
+                action.call this, key, callback.bind(this)
     else
         callback = functionify callback, args
         return () ->
-            action.call this, key, callback
+            action.call this, key, callback.bind(this)
 
 
 class Binding
