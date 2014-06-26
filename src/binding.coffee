@@ -78,8 +78,8 @@ class Binding
         return this
 
     set: (key, value) ->
-        deep_set @data, key, value
-        @trigger key, value
+        data = deep_set @data, key, value
+        @trigger key, value if data?
         return value
 
     get: (key) ->
