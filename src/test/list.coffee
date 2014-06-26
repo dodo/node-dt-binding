@@ -129,3 +129,71 @@ module.exports =
                 "</html>"
             ]
 
+        sync: (æ) ->
+            @æ = æ ; { $, api } = this
+            data = new Binding {
+                title: "foobar"
+                css:   "fun.css"
+                content: [
+                    {
+                        type: 'footer'
+                        body: "big foot"
+                    },
+                    {
+                        type: 'main'
+                        body: "hello world"
+                    },
+                    {
+                        type: 'header'
+                        body: "foobar"
+                    },
+                ]
+            }
+            tpl = @tpl = jqueryify {$}, new Template schema:5, ->
+                @$html ->
+                    @$head ->
+                        @$title data.bind 'title'
+                        @$link type:'text/css', data.bind 'css', 'attr', 'href'
+                    @$body data.repeat 'content', (content) ->
+                        attrs = content.get('attrs') ? {}
+                        this['$' + content.get 'type'] attrs, content.bind 'body', (text) ->
+                            @text text
+
+            setTimeout ->
+                data.addTo 'content', {
+                    type: 'header'
+                    body: "trololo"
+                }
+            , 16
+
+            setTimeout ->
+                content = data.get 'content'
+                content[0].body = "trololo"
+                data.set 'content', [
+                    content[2],
+                    content[3],
+                    content[1],
+                    content[0],
+                ]
+            , 23
+            setTimeout ->
+                data.set 'content.3.body', "tada"
+            , 42
+            setTimeout ->
+                data.set 'css', "pink.css"
+            , 64
+
+            @results = [
+                '<html>'
+                "<head>"
+                "<title>foobar</title>"
+                '<link type="text/css" href="pink.css">'
+                "</head>"
+                "<body>"
+                "<header>foobar</header>"
+                "<header>trololo</header>"
+                "<main>hello world</main>"
+                "<footer>tada</footer>"
+                "</body>"
+                "</html>"
+            ]
