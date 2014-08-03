@@ -23,20 +23,20 @@ functionify = (callback, args) ->
     unless typeof callback is 'function'
         if isArray(callback)
             methods = callback
-            callback = (value) ->
+            callback = (moargs...) ->
                 for method in methods
                     [method, args...] = if isArray(method) then method else [method]
-                    this[method]?.apply(this, args.concat [value])
+                    this[method]?.apply(this, args.concat moargs)
                 return
             callback.method = methods
         else
             method = callback
-            callback = (value) ->
-                this[method]?.apply(this, args.concat [value])
+            callback = (moargs...) ->
+                this[method]?.apply(this, args.concat moargs)
             callback.method = method
     else
-        return (value) ->
-            callback.apply(this, args.concat [value])
+        return (moargs...) ->
+            callback.apply(this, args.concat moargs)
     return callback
 
 # key can be either string or object of callback values
