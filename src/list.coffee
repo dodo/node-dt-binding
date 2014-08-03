@@ -19,6 +19,8 @@ createBinding = (value) ->
 boundpartial = (create, value, args...) ->
     binding = createBinding value
     partial = create(binding, args...)
+    unless partial?
+        create(new Error "partial or element missing!")
     partial._bind = binding if typeof binding is 'object'
     return partial
 
