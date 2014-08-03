@@ -101,7 +101,7 @@ listpartialize = (items, create, old, value = []) ->
     return this
 
 listpartial = (items, create, old, value) ->
-    partial = boundpartial create, value
+    partial = boundpartial create, value, items.length
     items.push(partial)
     @partial(partial)
     old.value.push(value)
