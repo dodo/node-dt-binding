@@ -75,6 +75,9 @@ class Binding
     trigger: (key, value) ->
         for callback in @_binds[key] ? []
             callback(value)
+        if value and typeof value is 'object'
+            for subkey, subval of value
+                @trigger "#{key}.#{subkey}", subval
         return this
 
     set: (key, value) ->
