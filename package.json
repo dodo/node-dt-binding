@@ -1,6 +1,6 @@
 { "name": "dt-binding"
 , "description": "Δt data bindings - async & dynamic templating engine"
-, "version": "0.1.0"
+, "version": "0.1.1"
 , "homepage": "https://github.com/dodo/node-dt-binding"
 , "author": "dodo (https://github.com/dodo)"
 , "repository": {"type": "git", "url": "git://github.com/dodo/node-dt-binding.git"}
