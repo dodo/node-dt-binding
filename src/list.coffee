@@ -22,7 +22,8 @@ boundpartial = (create, value, args...) ->
     partial = create(binding, args...)
     unless partial?
         create(new Error "partial or element missing!")
-    partial._bind = binding if typeof binding is 'object'
+    el = partial.xml ? partial # dt-list ignores templates
+    el._bind = binding if typeof value is 'object'
     return partial
 
 listadd = (items, create, old, value) ->
