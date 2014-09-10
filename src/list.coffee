@@ -114,19 +114,19 @@ deep_set = (items, data, key, value) ->
     last_key = keys.pop()
 
     curkey = ''
-    for k, i in keys
+    for k,i in keys
         curkey += (curkey and '.' or '') + k
         curdata = data
         next = data[k]
         next = next.call(data) if typeof next is 'function'
         data = next
         if isArray(data)
-            i = keys.pop() # index
             restkeys = keys.slice(i + 1)
             restkeys.push(last_key)
-            binding = items[curkey][i]?._bind
+            index = restkeys.shift()
+            binding = items[curkey][index]?._bind
             if restkeys.length is 0
-                curdata[k][i] = value
+                curdata[k][index] = value
                 result = binding?.change(value)
             else
                 result = binding?.set(restkeys.join('.'), value)
