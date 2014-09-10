@@ -3,7 +3,7 @@ adiff = require 'adiff'
 { slice } = Array.prototype
 { isArray } = Array
 { Binding } = require './binding'
-{ multiplex } = require './util'
+{ multiplex, deep_get } = require './util'
 
 # use an even simpler equals comparator for adiff
 adiff = adiff({
@@ -166,6 +166,11 @@ class ListBinding extends Binding
         result = deep_set @items, @data, key, value
         @trigger key, result.value if result.trigger
         return result.value
+
+    indexOf: (key, subkey, value) ->
+        for data,i in @get(key) ? []
+            return i if deep_get(data, subkey) is value
+        return -1
 
     addTo: (key, value) ->
         if /\.\d+\./.test(key)
