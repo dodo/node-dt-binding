@@ -168,6 +168,12 @@ class ListBinding extends Binding
         return result.value
 
     addTo: (key, value) ->
+        if /\.\d+\./.test(key)
+            subkey = key.split(/\.\d+\./, 1)[0]
+            restkeys = key.substr(subkey.length + 1).split('.')
+            i = restkeys.shift()
+            binding = @items[subkey][i]?._bind
+            return binding?.addTo(restkeys.join('.'), value)
         @get(key)?.push?(value)
         return @partials[key]?(value)
 
