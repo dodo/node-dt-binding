@@ -145,6 +145,12 @@ class ListBinding extends Binding
         @partials = {}
         super
 
+    unbind: (key) ->
+        delete @items[key] if @items[key]?
+        delete @values[key] if @values[key]?
+        delete @partials[key] if @partials[key]?
+        super
+
     repeat: (key, callback = 'text', args...) ->
         that = this
         old = {value:[]}
@@ -156,11 +162,11 @@ class ListBinding extends Binding
             (that._binds[key] ?= []).push(listpartialize.bind this, items, callback, old)
             listpartialize.call this, items, callback, old, that.get(key)
 
-    unbind: (key) ->
-        delete @items[key] if @items[key]?
-        delete @values[key] if @values[key]?
-        delete @partials[key] if @partials[key]?
-        super
+    each: (key, callback = 'text', args...) ->
+        that = this
+        do multiplex key, callback, args, (key, callback) ->
+            that.items[key]?.forEach (item, i) ->
+                callback(item._bind, i) if item?._bind?
 
     set: (key, value) ->
         result = deep_set @items, @data, key, value
