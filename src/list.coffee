@@ -2,7 +2,8 @@ adiff = require 'adiff'
 { List } = require 'dt-list'
 { slice } = Array.prototype
 { isArray } = Array
-{ Binding, multiplex } = require './binding'
+{ Binding } = require './binding'
+{ multiplex } = require './util'
 
 # use an even simpler equals comparator for adiff
 adiff = adiff({
@@ -177,7 +178,7 @@ class ListBinding extends Binding
         delete @items[i]._bind
         return @items.remove(i)
 
-
+# exports
 
 module.exports = ListBinding
 ListBinding.Binding = ListBinding
