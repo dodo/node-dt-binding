@@ -129,6 +129,87 @@ module.exports =
                 "</html>"
             ]
 
+        addTo: (æ) ->
+            @æ = æ ; { $, api } = this
+            data = new Binding {
+                title: "foobar"
+                css:   "fun.css"
+                content: []
+            }
+            testData = [
+                {
+                    type: 'header'
+                    body: "foobar"
+                },
+                {
+                    type: 'main'
+                    body: "hello world"
+                },
+                {
+                    type: 'footer'
+                    body: "big foot"
+                },
+            ]
+
+            setTimeout ->
+                testData.forEach(data.addTo.bind(data, 'content'))
+            , 16
+
+            tpl = @tpl = jqueryify {$}, new Template schema:5, ->
+                @$html ->
+                    @$head ->
+                        @$title data.bind 'title'
+                        @$link type:'text/css', data.bind 'css', 'attr', 'href'
+                    @$body data.repeat 'content', (content) ->
+                        this['$' + content.get 'type'](content.bind 'body')
+
+            @results = [
+                '<html>'
+                "<head>"
+                "<title>foobar</title>"
+                '<link type="text/css" href="fun.css">'
+                "</head>"
+                "<body>"
+                "<header>foobar</header>"
+                "<main>hello world</main>"
+                "<footer>big foot</footer>"
+                "</body>"
+                "</html>"
+            ]
+
+        'deep addTo': (æ) ->
+            @æ = æ ; { $, api } = this
+            data = new Binding {
+                title: "foobar"
+                css:   "fun.css"
+                content: [{type:'head'},{type:'body', text:[]}]
+            }
+            testData = [
+                "foobar"
+                "hello world"
+                "big foot"
+            ]
+
+            setTimeout ->
+                testData.forEach(data.addTo.bind(data, 'content.1.text'))
+            , 16
+
+            tpl = @tpl = jqueryify {$}, new Template schema:5, ->
+                @$html data.repeat 'content', (content) ->
+                        this['$' + content.get 'type'] content.repeat 'text', '$span'
+
+            @results = [
+                '<html>'
+                "<head>"
+                "</head>"
+                "<body>"
+                "<span>foobar</span>"
+                "<span>hello world</span>"
+                "<span>big foot</span>"
+                "</body>"
+                "</html>"
+            ]
+
         sync: (æ) ->
             @æ = æ ; { $, api } = this
             data = new Binding {
@@ -162,13 +243,13 @@ module.exports =
             setTimeout ->
                 data.addTo 'content', {
                     type: 'header'
-                    body: "trololo"
+                    body: "PANIC"
                 }
             , 16
 
             setTimeout ->
                 content = data.get 'content'
-                content[0].body = "trololo"
+                content[0].body = "fun"
                 data.set 'content', [
                     content[2],
                     content[3],
@@ -191,7 +272,7 @@ module.exports =
                 "</head>"
                 "<body>"
                 "<header>foobar</header>"
-                "<header>trololo</header>"
+                "<header>fun</header>"
                 "<main>hello world</main>"
                 "<footer>tada</footer>"
                 "</body>"
